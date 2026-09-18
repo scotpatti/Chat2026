@@ -1,5 +1,7 @@
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ChatLibrary;
 
@@ -40,6 +42,39 @@ public static class Extensions
     {
         string msg = client.ReadString();
         (bool success, string errors) = JsonSchemaValidator.Validate(msg);
-        //TODO Start HERE
+        if (success)
+        {
+            var chatMessage = JsonConvert.DeserializeObject<ChatMessage>(msg);
+            if (chatMessage == null)
+            {
+                throw new Exception("Something went wrong and we couldn't deserialize the object from JSON.");
+            }
+            return chatMessage;
+        }
+
+        return null;
+    }
+
+    public static void WriteChatMessage(this TcpClient client, ChatMessage msg)
+    {
+        string json = JsonConvert.SerializeObject(msg);
+        client.WriteString(json);
+    }
+
+    public static IPAddress LocalIpAddress()
+    {
+        if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+        {
+            return IPAddress.None;
+        }
+
+        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+        if (host != null)
+        {
+            var ip = host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            if (ip != null)
+                return ip;
+        }
+        return IPAddress.None;
     }
 }
