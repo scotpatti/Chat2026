@@ -9,7 +9,7 @@ class Program
     private static string? Name { get; set; } = string.Empty;
     private static ChatNetworkModel? Model { get; set; }
     
-    static void Main(string[] args)
+    static void Main()
     {
         var prog = new Program();
         prog.MainAsync();
@@ -22,6 +22,8 @@ class Program
 
         Model.PropertyChanged += PropertyChangedListener;
         Model.Username = Name;
+        Model.CurrentMessage = "";
+        //Model.MessageBoard = "";
         Model.Connect();
         Console.WriteLine($"Connected to {Model.IP}:{Model.PORT}");
         Console.Write("Enter your message: ");
@@ -78,7 +80,7 @@ class Program
         }
     }
 
-    private static void PropertyChangedListener(object sender, PropertyChangedEventArgs e)
+    private static void PropertyChangedListener(object? sender, PropertyChangedEventArgs e)
     {
         if (sender is ChatNetworkModel model)
         {

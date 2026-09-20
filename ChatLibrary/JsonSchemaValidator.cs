@@ -21,7 +21,7 @@ public class JsonSchemaValidator
                 ""type"":""string"",
                 ""default"":""""
             }
-        }
+        },
         ""required"": [""Sender"", ""Message""],
         ""additionalProperties"": false
     }");
@@ -44,9 +44,9 @@ public class JsonSchemaValidator
 
             return (success, errs.ToString());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return (false, "Invalid JSON");
+            return (false, "Invalid JSON: {ex.Message}");
         }
     }
 }
